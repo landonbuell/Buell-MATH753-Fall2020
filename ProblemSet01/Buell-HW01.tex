@@ -1,0 +1,114 @@
+% ================
+% Landon Buell
+% Mark lyon
+% MATH 753.01 - HE01
+% 4 Sept 2020
+% ================
+
+\documentclass[12pt,letterpaper]{article}
+\usepackage[top=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{physics}
+
+
+\begin{document}
+
+% ================================================================
+
+\title{MATH 753.01 - Fall 2020 \\ Homework 01}
+\author{Landon Buell}
+\date{4 September 2020}
+\maketitle
+
+% ================================================================
+
+\section*{Section 0.4}
+
+% ================================================
+
+\subsection*{Ex 1}
+Identify which values of $x$ that there is subtraction of nearly equal numbers - Find an equivalent expression.
+
+\begin{itemize}
+
+\item[•] (a)
+\begin{equation}
+\frac{1 - \sec(x)}{\tan^2(x)} 
+\end{equation}
+The $\sec(x)$ function is very near $+1$ for values of $x \approx 2n\pi$, this would create subtraction of nearly equal numbers. We can use trigonometric rules:
+\begin{equation}
+\frac{1 - 1/\cos(x)}{\tan^2(x)} = 
+\end{equation}
+
+\item[•] (b)
+\begin{equation}
+\frac{1 - (1 - x)^3}{x}
+\end{equation}
+For $x \approx 0$, the numerator evaluated roughly to $1 - 1$, thus we have subtraction of nearly equal numbers. Additionally, this would likely raise a \textit{zero-division error} if $x = 0$ exactly. We can expand the numerator, and find the algebraic equivalent:
+\begin{equation}
+\frac{1 - (-x^3 + 3x^2 - 3x + 1)}{x} = \frac{x^3 - 3x^2 + 3x}{x} = x^2 - 3x + 3
+\end{equation}
+
+\item[•] (c)
+\begin{equation}
+\frac{1}{1 + x} - \frac{1}{1 - x}
+\end{equation}
+For $x \approx 0$, both terms will evaluate to approximately $1/1$. This would create subtraction of nearly equal numbers. 
+
+\end{itemize}
+
+% ================================================
+
+\subsection*{Ex 2}
+Find the roots of $x^2  + 3x - 8^{-14} = 0$ with three-digit accuracy.
+
+% ================================================
+
+
+\subsection*{Ex 4}
+Evaluate $x\sqrt{x^2 + 17} - x^2$ where $x = 9^{10}$  to three decimals.
+
+\paragraph*{}We multiply the function by it's conjugate:
+\begin{equation}
+x\sqrt{x^2 + 17} - x^2 = 
+\frac{(x\sqrt{x^2 + 17} - x^2)}{1}\frac{(x\sqrt{x^2 + 17} + x^2)}{(x\sqrt{x^2 + 17} + x^2)} =
+\frac{(x^2(x^2 + 17) - x^4)}{(x\sqrt{x^2 + 17} + x^2)}
+\end{equation}
+
+% ================================================================
+
+\section*{0.5}
+
+% ================================================
+
+\subsection*{Ex 4}
+
+% ================================================
+
+\subsection*{Ex 6}
+
+% ================================================
+
+\subsection*{Ex 8}
+
+% ================================================
+
+\subsection*{Ex 9}
+
+% ================================================================
+
+\section*{1.1}
+
+% ================================================
+
+\subsection*{Ex 2}
+
+% ================================================
+
+\subsection*{Ex 4}
+
+% ================================================================
+
+\end{document}
+
+
