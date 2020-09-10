@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PandemicModeling", "PandemicModeling\PandemicModeling.pyproj", "{DB44D2FF-4B05-4B88-9C4B-5F900C3B3322}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB44D2FF-4B05-4B88-9C4B-5F900C3B3322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB44D2FF-4B05-4B88-9C4B-5F900C3B3322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B09DCE6B-50FC-4C4A-AE0A-A6384F173E42}
+	EndGlobalSection
+EndGlobal
