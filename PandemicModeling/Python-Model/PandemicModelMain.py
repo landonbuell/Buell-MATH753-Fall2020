@@ -19,3 +19,7 @@ if __name__ == '__main__':
 
     MODEL = Models.SingleLocationModel("SIR-TEST")
     
+    MODEL.AddLocation(Locations.Community(name="COM1",position=(0,0),size=(101,101)))
+
+
+    print("=)")

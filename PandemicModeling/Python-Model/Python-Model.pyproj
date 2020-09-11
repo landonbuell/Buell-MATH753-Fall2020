@@ -2,15 +2,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>db44d2ff-4b05-4b88-9c4b-5f900c3b3322</ProjectGuid>
+    <ProjectGuid>7d6925da-22b6-4079-9b6b-c4ca71c0726a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>PandemicModelMain.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>PandemicModeling</Name>
-    <RootNamespace>PandemicModeling</RootNamespace>
+    <Name>Python-Model</Name>
+    <RootNamespace>Python-Model</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,15 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Individuals.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Locations.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Models.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Individuals.py" />
+    <Compile Include="Locations.py" />
+    <Compile Include="Models.py" />
     <Compile Include="PandemicModelMain.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

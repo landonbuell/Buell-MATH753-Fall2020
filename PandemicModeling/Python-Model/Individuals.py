@@ -26,9 +26,9 @@ class Individual :
         --------------------------------
         Return None
         """
-        self.name = name
         self.number = number
         self.condition = 0
+        self.daysSick = 0;
 
         self.xloc = loc[0]
         self.yloc = loc[1]
