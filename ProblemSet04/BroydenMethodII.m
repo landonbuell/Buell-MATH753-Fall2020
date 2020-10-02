@@ -10,6 +10,9 @@ for i = 1:k
     del = x - x0;
     Del = f(x) - f(x0);
     b = b + (del - b * Del) * del' * b / (del' * b * Del);
+    disp(del)
+    disp(Del)
+    disp(b)
     x0 = x;
     disp(x0);
 end
