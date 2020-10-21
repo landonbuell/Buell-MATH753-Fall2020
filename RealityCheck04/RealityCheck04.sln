@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealityCheck04", "RealityCheck04\RealityCheck04.csproj", "{163CA8A7-6911-40F7-8E14-DBED8DA2003A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{163CA8A7-6911-40F7-8E14-DBED8DA2003A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{163CA8A7-6911-40F7-8E14-DBED8DA2003A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{163CA8A7-6911-40F7-8E14-DBED8DA2003A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{163CA8A7-6911-40F7-8E14-DBED8DA2003A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {202171CB-3A3C-4668-804E-19275DF5BCC4}
+	EndGlobalSection
+EndGlobal
