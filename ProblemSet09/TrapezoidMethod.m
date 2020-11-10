@@ -1,5 +1,5 @@
 function [vals] = TrapezoidMethod(func,t,y0)
-%TrapezoidMethod Solve 1st order ODE with Euler's Method
+%TrapezoidMethod Solve 1st order ODE with Trapezoidal method
 % func : right side of eqn
 % t : time axis
 % y0 : starting function value
