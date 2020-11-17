@@ -51,6 +51,10 @@ class OrbitalSystem :
         assert index in [0,1,2]
         return np.array([body._vel[index] for body in self._bodyList])
 
+    def GetAccelerationIndex(self,index):
+        assert index in [0,1,2]
+        return np.array([body._acl[index] for body in self._bodyList])
+
     @property
     def GetNames(self):
         """ Get array of names for all bodies in this system """
