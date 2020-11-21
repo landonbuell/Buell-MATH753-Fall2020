@@ -12,6 +12,8 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from Solver import *
+
             #### CLASS DEFINITIONS ####
 
 class OrbitalSystem :
@@ -25,13 +27,15 @@ class OrbitalSystem :
     Return Instantiated Orbital System
     """
 
-    def __init__(self,name,bodyList=[]):
+    def __init__(self,name,bodyList=[],time=[]):
         """
         Constructor for Orbital System 
         """
         self._name = name
         self._bodyList = bodyList
-        
+        self._time = time
+        self.Solver = DormandPrinceSolver()
+      
     def AddBody (self,newBody):
         """ Add 'newBody' to List of Bodies """
         self._bodyList.append(newBody)
@@ -40,6 +44,16 @@ class OrbitalSystem :
     def PopBody (self,index=-1):
         """ Remove & Return Body at Index """
         raise NotImplementedError()
+
+    @property
+    def GetTime(self):
+        """ Return Time-Axis """
+        return self._time
+
+    @GetTime.setter
+    def SetTime(self,value):
+        """ Set Time-Axis """
+        self._time = value
 
     def GetPositionIndex(self,index):
         """ Get Position for each body in the system """
@@ -79,7 +93,11 @@ class OrbitalSystem :
 
     def CallSystem(self,nIters):
         """ Call the System - Execute ODE Solver For Iterations """
-        pass
+        
+        # Build function to Pass into Dormand-Prince Solver
+
+
+
 
     def PlotCurrentState(self):
         """ Plot the Current System in the XY-plane """
@@ -110,34 +128,3 @@ class OrbitalSystem :
     def __repr__(self):
         """ Return Documentation String on this Orbital System Object """
         return self._name
-
-class Body :
-    """
-    Represents an Celestial Body: Planet, Asteroid, Star, etc.
-    --------------------------------
-    name (str) : Name to identify Body Object
-    mass (float) : Mass of Body in Kg
-    rad (float) : Equitorial Radius of body
-    pos (arr) : Position of body as 3-vectorin Km
-    vel
-    --------------------------------
-    Return Instantiated Body Object
-    """
-
-    def __init__(self,name,mass,rad,pos=np.zeros(3),vel=np.zeros(3)):
-        """ Initialize body Object Instance """
-
-        # Scalar Attributes
-        self._name = name
-        self._mass = mass
-        self._rad = rad
-        self._vol = (4/3)*np.pi*self._rad**3
-        self._den = self._mass / self._vol
-
-        # Vector atrribtues
-        self._pos = pos
-        self._vel = vel
-        self._acl = np.zeros(shape=3)
-
-    
-

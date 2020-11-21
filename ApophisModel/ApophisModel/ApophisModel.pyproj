@@ -22,7 +22,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApophisModelMain.py" />
-    <Compile Include="ApophisModelUtils.py">
+    <Compile Include="Body.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Solver.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OrbitalSystem.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

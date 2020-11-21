@@ -10,16 +10,20 @@ MATH 753.01 - HW10
 import numpy as np
 import os
 
-import ApophisModelUtils as Utils
+from OrbitalSystem import *
+from Body import *
+
 
 if __name__ == "__main__":
 
     # INITIALIZE SYSTEM & ADD BODIES
-    SolarSystem = Utils.OrbitalSystem("Solar System")
+    SolarSystem = OrbitalSystem("Solar System")
 
-    SolarSystem.AddBody(Utils.Body("Alpha",1e20,1e8,
+    SolarSystem.AddBody(BodyObject("Alpha",2e20,1e8,
                     pos=np.array([1e3,0,0]),vel=np.array([0,+10,0])))
-    SolarSystem.AddBody(Utils.Body("Beta",1e20,1e8,
+    SolarSystem.AddBody(BodyObject("Beta",1e20,1e8,
                     pos=np.array([-1e3,0,0]),vel=np.array([0,-10,0])))
+    SolarSystem.AddBody(BodyObject("Gamma",1e15,1e8,
+                    pos=np.array([0,1e4,0]),vel=np.array([0,-100,0])))
 
     SolarSystem.PlotCurrentState()
