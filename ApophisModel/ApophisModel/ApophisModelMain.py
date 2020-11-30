@@ -12,9 +12,18 @@ import os
 
 from OrbitalSystem import *
 from Body import *
+from Solver import *
 
 
 if __name__ == "__main__":
+
+    # Create Test ODE
+    func = lambda t,y : np.array([0.5*y[0] , 1.5*y[1]])
+    t = np.arange(0,100,0.1)
+    w = np.array([1,2])
+    DPSolver = DormandPrinceSolver(func)
+    DPSolver.Call(t,w,tol=1e-4)
+
 
     # INITIALIZE SYSTEM & ADD BODIES
     SolarSystem = OrbitalSystem("Solar System")

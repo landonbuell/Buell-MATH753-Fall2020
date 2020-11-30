@@ -50,7 +50,6 @@ class OrbitalSystem :
         """ Return Time-Axis """
         return self._time
 
-    @GetTime.setter
     def SetTime(self,value):
         """ Set Time-Axis """
         self._time = value
@@ -96,9 +95,6 @@ class OrbitalSystem :
         
         # Build function to Pass into Dormand-Prince Solver
 
-
-
-
     def PlotCurrentState(self):
         """ Plot the Current System in the XY-plane """
         plt.figure(figsize=(16,12))
@@ -127,4 +123,4 @@ class OrbitalSystem :
 
     def __repr__(self):
         """ Return Documentation String on this Orbital System Object """
-        return self._name
+        return self._name 
