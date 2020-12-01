@@ -17,22 +17,39 @@ from Solver import *
 
 if __name__ == "__main__":
 
-    # Create Test ODE
-    func = lambda t,y : np.array([0.5*y[0] , 1.5*y[1]])
-    t = np.arange(0,100,0.1)
-    w = np.array([1,2])
-    DPSolver = DormandPrinceSolver(func)
-    DPSolver.Call(t,w,tol=1e-4)
-
-
     # INITIALIZE SYSTEM & ADD BODIES
     SolarSystem = OrbitalSystem("Solar System")
+    SolarSystem.LoadSystem("AphophisModel_2020.11.12.csv")
 
-    SolarSystem.AddBody(BodyObject("Alpha",2e20,1e8,
-                    pos=np.array([1e3,0,0]),vel=np.array([0,+10,0])))
-    SolarSystem.AddBody(BodyObject("Beta",1e20,1e8,
-                    pos=np.array([-1e3,0,0]),vel=np.array([0,-10,0])))
-    SolarSystem.AddBody(BodyObject("Gamma",1e15,1e8,
-                    pos=np.array([0,1e4,0]),vel=np.array([0,-100,0])))
+    #PlottingFunctions.PlotCurrentState(SolarSystem)
+    
+    # SET TIME AXIS & GET INITIAL VALUES
+    SolarSystem.SetTime(np.arange(0,int(1e6),100))
+    initConds = SolarSystem.GetCurrentState  
 
-    SolarSystem.PlotCurrentState()
+    # INITIALIZE DORMAND-PRINCE SOLVER
+    Solver = DormandPrinceSolver(func=OrbitalSystemCallable.CallSystem)
+    Solver.SetMasses(SolarSystem.GetMasses) 
+
+    # CALL THE SOLVER
+    Solver.Call(SolarSystem._time,initConds,1e-4)
+
+    # GET MOST RECENT STATE & Apply to System
+    lastState = Solver._lastState
+    lastState = np.reshape(lastState,newshape=(-1,6))
+    for i in range(len(SolarSystem._bodyList)):     # each body
+        SolarSystem._bodyList[i].SetStateVector(lastState[i])
+
+    # APPLY POSITION HISTORITES TO BODIES
+    stateHistory = Solver._stateHistories.reshape((Solver._nSteps,6,-1))
+    for i in range(len(SolarSystem._bodyList)):     # each body
+        xHist = stateHistory[:,i,0]
+        yHist = stateHistory[:,i,1]
+        zHist = stateHistory[:,i,2]
+        SolarSystem._bodyList[i].SetHistoryArrays(xHist,yHist,zHist)
+
+    PlottingFunctions.PlotHistoricalState(SolarSystem)
+
+    print("=)")
+
+    

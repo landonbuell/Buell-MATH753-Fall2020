@@ -12,6 +12,8 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from Body import *
+
             #### CLASS DEFINITIONS ####
 
 class DormandPrinceSolver :
@@ -19,14 +21,19 @@ class DormandPrinceSolver :
     Dormand Prince Solver for Systems of ODEs
     """
 
-    def __init__(self,func=None):
+    def __init__(self,func=None,masses=None):
         """ Initialize DormandPrinceSolver Instance """
         self._func = func
+        self._masses = masses
         self._X = self.ConstantsMatrix
 
     def SetODE (self,func):
         """ Set the ODE to solve in form of f(t,y) """
         self._func = func
+
+    def SetMasses (self,masses):
+        """ Set masses from parent orbital system """
+        self._masses = masses
 
     @property
     def ConstantsMatrix(self):
@@ -50,40 +57,75 @@ class DormandPrinceSolver :
         w (float) : Current position index
         --------------------------------
         """
-        self._S = np.zeros(shape=(7,len(w)))       # array to hold [c1,c2,c3,....]
+        self._S = np.zeros(shape=(7,len(w)))        # array to hold [c1,c2,c3,....]
         tSteps = np.array([0,1/5,3/10,4/5,8/9,1,0]) # for each timeStep
-
-        s0 = self._func(t,w)                        # inital function call        
+        s0 = self._func(t,w,self._masses)           # inital function call        
         self._S[0] = s0
 
         # Compute Each entry
-        for i in range (1,7):                       # each "s" in DP-Solver
-            dotProd = np.dot(self._X[i].transpose(),self._S)                            # w + h * (...)
-            Si = self._func(t + self._h*tSteps[i] , w + self._h*dotProd)    # f(t+h(...) , w + h(...)
-            self._S[i] = Si          # add to array
-            if i == 6:      # for the 6-th iter
-                self._Z = w + self._h*dotProd   # save the value fo err
-        nextStep = w + self._h*np.dot(self._X[7],self._S)
-        return nextStep     # return next step
+        for i in range (1,7):               # each "s" in DP-Solver
+            dotProd = np.dot(self._X[i].transpose(),self._S)            # w + h * (...)
 
-    def Call (self,t,w,tol):
+            # Call 'func' w/ t , w/ w and w/ masses
+            self._S[i] = self._func(t + self._h*tSteps[i] , w + self._h*dotProd , self._masses)
+
+            if i == 6:                      # for the 6-th iter
+                self._Z = w + self._h*dotProd   # save the value fo err
+
+        nextStep = w + self._h*np.dot(self._X[7],self._S)
+        return nextStep                     # return next step
+
+    def Call (self,t,w0,tol):
         """ Run Solver For System """
-        nSteps = len(t)
-        path = np.empty(shape=(nSteps,len(w)))
-        path[0] = w
-        self._h = t[1] - t[0]   
-        for i in range(nSteps):
-            nextStep = self.NextStep(t[i],path[i])  # compute next step
-            err = self._Z - nextStep                # error in step
+
+        # Initialize Path Array
+        self._nSteps = len(t)       
+        self._stateHistories = np.empty(shape=(self._nSteps,len(w0)))
+        self._stateHistories[0] = w0
+
+        # Intialize Step Size & Tolerance Params
+        self._h = t[1] - t[0]  
+        self._tolParam = tol*self._h
+
+        # Iterate through Time
+        state = w0
+        for i in range(self._nSteps-1):
+            state = self.NextStep(t[i],state)   # compute next step
+            err = self._Z - state               # error in step
 
             # need to test error tol
-            path[i] = nextStep
 
-        plt.plot(t,path[:,0])
-        plt.plot(t,path[:,1])
-        plt.show()
+            self._stateHistories[i+1] = state
 
+        self._lastState = state
         return self
+
+
+class OrbitalSystemCallable:
+    """ Class Contains static callable method for DP-Solver to execute """
+
+    @staticmethod
+    def CallSystem(t,y,masses):
+        """ Call System at time t w/ state vector y """
+        G = 6.67e-20
+        y = np.reshape(y,newshape=(-1,6))       # each row represents body
+        newState = np.empty(shape=y.shape)      # empty array to hold new state
+
+        for i in range (len(y)):        # each body
+            posA = y[i,0:3]             # position vector
+            aclVec = np.zeros(3)        # empty acl vector
+            for j in range (len(y)):    # each body
+                if i == j:              # same body?
+                    continue            # skip
+                posB = y[j,0:3]         # position vector
+                
+                # Compute Aceelration of A due to B
+                dr = (posB - posA) / np.abs(posB - posA)**3
+                aclVec += G*masses[j]*dr
+
+            # new state vector for this body
+            newState[i] = np.concatenate((y[i,3:6],aclVec),axis=None)    
+        return newState.ravel()         # return the new state
 
 
             
