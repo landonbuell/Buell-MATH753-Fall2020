@@ -59,7 +59,7 @@ class DormandPrinceSolver :
         """
         self._S = np.zeros(shape=(7,len(w)))        # array to hold [c1,c2,c3,....]
         tSteps = np.array([0,1/5,3/10,4/5,8/9,1,0]) # for each timeStep
-        s0 = self._func(t,w,self._masses)           # inital function call        
+        s0 = self._func(t,w)                        # inital function call        
         self._S[0] = s0
 
         # Compute Each entry
@@ -67,7 +67,7 @@ class DormandPrinceSolver :
             dotProd = np.dot(self._X[i].transpose(),self._S)            # w + h * (...)
 
             # Call 'func' w/ t , w/ w and w/ masses
-            self._S[i] = self._func(t + self._h*tSteps[i] , w + self._h*dotProd , self._masses)
+            self._S[i] = self._func(t + self._h*tSteps[i] , w + self._h*dotProd)
 
             if i == 6:                      # for the 6-th iter
                 self._Z = w + self._h*dotProd   # save the value fo err
@@ -107,6 +107,9 @@ class OrbitalSystemCallable:
     @staticmethod
     def CallSystem(t,y,masses):
         """ Call System at time t w/ state vector y """
+
+        raise NotImplementedError()
+
         G = 6.67e-20
         y = np.reshape(y,newshape=(-1,6))       # each row represents body
         newState = np.empty(shape=y.shape)      # empty array to hold new state

@@ -28,7 +28,7 @@ if __name__ == "__main__":
     initConds = SolarSystem.GetCurrentState  
 
     # INITIALIZE DORMAND-PRINCE SOLVER
-    Solver = DormandPrinceSolver(func=OrbitalSystemCallable.CallSystem)
+    Solver = DormandPrinceSolver(func=SolarSystem.CallSystem)
     Solver.SetMasses(SolarSystem.GetMasses) 
 
     # CALL THE SOLVER

@@ -85,6 +85,28 @@ class OrbitalSystem :
         assert index in [0,1,2]
         return np.array([body._acl[index] for body in self._bodyList])
 
+    def CallSystem(self,t,y):
+        """ Call System at time t w/ state vector y """
+        G = 6.67e-20
+        y = np.reshape(y,newshape=(-1,6))       # each row represents body
+        newState = np.empty(shape=y.shape)      # empty array to hold new state
+
+        for i in range (len(y)):        # each body
+            posA = y[i,0:3]             # position vector
+            aclVec = np.zeros(3)        # empty acl vector
+            for j in range (len(y)):    # each body
+                if i == j:              # same body?
+                    continue            # skip
+                posB = y[j,0:3]         # position vector
+                
+                # Compute Aceelration of A due to B
+                dr = (posB - posA) / np.abs(posB - posA)**3
+                aclVec += G*self.GetMasses[j]*dr
+
+            # new state vector for this body
+            newState[i] = np.concatenate((y[i,3:6],aclVec),axis=None)    
+        return newState.ravel()         # return the new state
+
     @property
     def GetCenterOfMass(self):
         """ Compute [x,y,x] center of mass """
