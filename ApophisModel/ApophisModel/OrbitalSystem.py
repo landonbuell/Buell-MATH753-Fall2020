@@ -28,14 +28,13 @@ class OrbitalSystem :
     Return Instantiated Orbital System
     """
 
-    def __init__(self,name,bodyList=[],time=[]):
+    def __init__(self,name,bodyList=[]):
         """
         Constructor for Orbital System 
         """
         self._name = name
         self._bodyList = bodyList
-        self._time = time
-        self.Solver = DormandPrinceSolver()
+        self._G = 6.67e-20
       
     def AddBody (self,newBody):
         """ Add 'newBody' to List of Bodies """
@@ -45,15 +44,6 @@ class OrbitalSystem :
     def PopBody (self,index=-1):
         """ Remove & Return Body at Index """
         raise NotImplementedError()
-
-    @property
-    def GetTime(self):
-        """ Return Time-Axis """
-        return self._time
-
-    def SetTime(self,value):
-        """ Set Time-Axis """
-        self._time = value
 
     @property
     def GetNames(self):
@@ -71,25 +61,26 @@ class OrbitalSystem :
         return np.array([body._rad for body in self._bodyList])
 
     def GetPositionIndex(self,index):
-        """ Get Position for each body in the system """
+        """ Get Position[index] for each body in the system """
         assert index in [0,1,2]
         return np.array([body._pos[index] for body in self._bodyList])
 
     def GetVelocityIndex(self,index):
-        """ Get Velocity for each body in the system """
+        """ Get Velocity[index] for each body in the system """
         assert index in [0,1,2]
         return np.array([body._vel[index] for body in self._bodyList])
 
     def GetAccelerationIndex(self,index):
-        """ Get Acceleration for each body in the system """
+        """ Get Acceleration[index] for each body in the system """
         assert index in [0,1,2]
         return np.array([body._acl[index] for body in self._bodyList])
 
     def CallSystem(self,t,y):
         """ Call System at time t w/ state vector y """
-        G = 6.67e-20
-        y = np.reshape(y,newshape=(-1,6))       # each row represents body
-        newState = np.empty(shape=y.shape)      # empty array to hold new state
+        
+        # Reshape state vector - each row represents body
+        y = np.reshape(y,newshape=(-1,6))       # [x,y,z,dx,dy,dz]
+        newState = np.empty(shape=y.shape)      # empty array to hold update
 
         for i in range (len(y)):        # each body
             posA = y[i,0:3]             # position vector
@@ -99,12 +90,14 @@ class OrbitalSystem :
                     continue            # skip
                 posB = y[j,0:3]         # position vector
                 
-                # Compute Aceelration of A due to B
-                dr = (posB - posA) / np.abs(posB - posA)**3
-                aclVec += G*self.GetMasses[j]*dr
+                # Compute Aceelration of A due to B (r is a 3-vector)
+                dr = (posB - posA) / np.abs(posB - posA + 1e-10)**3     # r/|r|^3
+                aclVec += self._G*self.GetMasses[j]*dr                  # add acl to this body
 
-            # new state vector for this body
-            newState[i] = np.concatenate((y[i,3:6],aclVec),axis=None)    
+            # new state vector for this body 
+            newState[i,0:3] = y[i,3:6]
+            newState[i,3:6] = aclVec
+            # Row Format: [dx,dy,dz,d2x,d2y,d2z]
         return newState.ravel()         # return the new state
 
     @property
@@ -115,7 +108,7 @@ class OrbitalSystem :
         return weightedSum / self.GetMasses.sum()
 
     def LoadSystem(self,filePath):
-        """ Load a System from parameters in File """
+        """ Load a System from parameters in local .CSV File """
         systemFile = pd.read_csv(filePath,header=0)
         systemArray = systemFile.to_numpy()
         for body in systemArray:        # each row od CSV file

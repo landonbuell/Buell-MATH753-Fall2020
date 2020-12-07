@@ -43,7 +43,6 @@ class BodyObject () :
         self._vel = vel
         self._acl = np.zeros(3)
 
-
     @property
     def GetStateVector (self):
         """ Get the State vector for this body """
@@ -72,6 +71,10 @@ class BodyObject () :
         self._yHist = yHist
         self._zHist = zHist
         return self
+
+    def SavePaths (self,x,y,z):
+        """ Save X,Y,Z paths in local Object """
+        pass
 
 
 

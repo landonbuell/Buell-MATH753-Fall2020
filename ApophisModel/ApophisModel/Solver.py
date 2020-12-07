@@ -21,19 +21,22 @@ class DormandPrinceSolver :
     Dormand Prince Solver for Systems of ODEs
     """
 
-    def __init__(self,func=None,masses=None):
+    def __init__(self,func=None,start=0,finish=0):
         """ Initialize DormandPrinceSolver Instance """
         self._func = func
-        self._masses = masses
+        self._t0 = start
+        self._tf = finish
         self._X = self.ConstantsMatrix
 
     def SetODE (self,func):
         """ Set the ODE to solve in form of f(t,y) """
         self._func = func
 
-    def SetMasses (self,masses):
-        """ Set masses from parent orbital system """
-        self._masses = masses
+    def SetTime(self,start,finish):
+        """ Set Time Range for Solver """
+        self._t0 = start
+        self._tf = finish
+        return self
 
     @property
     def ConstantsMatrix(self):
@@ -48,56 +51,68 @@ class DormandPrinceSolver :
         X[7] = np.array([5179/57600,0,7571/16695,393/640,-92097/339200,187/2100,1/40])
         return X
         
-    def NextStep (self,t,w):
+    def NextStep (self,t,w,h):
         """ 
         Compute Constants Array  
         --------------------------------
         func (callable) : Function to solve
         t (float) : Current time index
-        w (float) : Current position index
+        w (arr) : Current state vector (k,)
         --------------------------------
         """
-        self._S = np.zeros(shape=(7,len(w)))        # array to hold [c1,c2,c3,....]
-        tSteps = np.array([0,1/5,3/10,4/5,8/9,1,0]) # for each timeStep
-        s0 = self._func(t,w)                        # inital function call        
-        self._S[0] = s0
+        S = np.empty(shape=(7,len(w)))        # array to hold [c1,c2,c3,....]
+        # Compute elements in S-vector, 
+        S[0] = self._func(t, w) 
+        S[1] = self._func(t + (1/5)*h,
+            w + h*((1/5)*S[0]))
+        S[2] = self._func(t + (3/10)*h, 
+            w + h*((3/40)*S[0] + (9/40)*S[0]))
+        S[3] = self._func(t + (4/5)*h, 
+            w + h*((44/45)*S[0] - (56/15)*S[1]+ + (32/9)*S[2]))
+        S[4] = self._func(t + (8/9)*h,
+            w + h*((19732/6561)*S[0] - (25360/2187)*S[1] + (64448/6561)*S[2] - (212/72)*S[3]))
+        S[5] = self._func(t + h,
+            w + h*((9017/3168)*S[0] - (355/33)*S[1] + (46732/5247)*S[2] + (49/167)*S[3] - (5103/18656)*S[4]))
+        # "Z" is used to comput error in the step
+        Z = w + h*((35/384)*S[0] + (500/1113)*S[2] + (125/192)*S[3] - (2187/6784)*S[4] + (11/84)*S[5])
+        S[6] = self._func(t + h, Z)
+        # Compute the Next Step
+        nextStep = w + h*((5179/57600)*S[0] + (7571/16695)*S[2] + (393/640)*S[3] - (92097/339200)*S[4] + \
+            (187/2100)*S[5] + (1/40)*S[6])
+        # Return the next step & The "Z" vector
+        return nextStep,Z
 
-        # Compute Each entry
-        for i in range (1,7):               # each "s" in DP-Solver
-            dotProd = np.dot(self._X[i].transpose(),self._S)            # w + h * (...)
-
-            # Call 'func' w/ t , w/ w and w/ masses
-            self._S[i] = self._func(t + self._h*tSteps[i] , w + self._h*dotProd)
-
-            if i == 6:                      # for the 6-th iter
-                self._Z = w + self._h*dotProd   # save the value fo err
-
-        nextStep = w + self._h*np.dot(self._X[7],self._S)
-        return nextStep                     # return next step
-
-    def Call (self,t,w0,tol):
+    def CallSolver (self,w0,tol):
         """ Run Solver For System """
 
-        # Initialize Path Array
-        self._nSteps = len(t)       
-        self._stateHistories = np.empty(shape=(self._nSteps,len(w0)))
-        self._stateHistories[0] = w0
+        # Initialize Positions & Time
+        h = (self._tf - self._t0)/4
+        currentState = w0
+        currentTime = self._t0
+        self._stepCounter = 0
 
-        # Intialize Step Size & Tolerance Params
-        self._h = t[1] - t[0]  
-        self._tolParam = tol*self._h
+        # Inititialize History Objects
+        self._states = np.copy(currentState)
+        self._times = np.array([currentTime])
 
-        # Iterate through Time
-        state = w0
-        for i in range(self._nSteps-1):
-            state = self.NextStep(t[i],state)   # compute next step
-            err = self._Z - state               # error in step
+        while currentTime < self._tf:
+            # Compute potential next step
+            W,Z = self.NextStep(currentTime,currentState,h)  # CHECK THIS!!!
+            err = np.abs(Z - W)         
 
-            # need to test error tol
+            if np.min(err < tol*h/(self._tf - self._t0)) > 0:   # error is acceptable
+                # Update the State & the time
+                currentState = W        # update state vector
+                currentTime += h        # update time scalar               
+                # Store the state & time
+                self._states = np.vstack((self._states,currentState))
+                self._times = np.append(self._times,currentTime)
+                self._stepCounter += 1
 
-            self._stateHistories[i+1] = state
-
-        self._lastState = state
+            elif np.min(err < (1/50)*tol*h/(self._tf - self._t0)) > 0:               
+                h *= 2      # Error is small, increase step
+            else:                
+                h /= 2      # Error is large, decrease step
         return self
 
 
