@@ -19,24 +19,25 @@ if __name__ == "__main__":
 
     # INITIALIZE SYSTEM & ADD BODIES
     SolarSystem = OrbitalSystem("Solar System")
-    SolarSystem.LoadSystem("DemoSystem.csv")
+    SolarSystem.LoadSystem("AphophisModel_2020.11.12.csv")
 
-    #PlottingFunctions.PlotCurrentState(SolarSystem)
+    PlottingFunctions.PlotCurrentState(SolarSystem)
     initConds = SolarSystem.GetCurrentState 
      
     # INITIALIZE DORMAND-PRINCE SOLVER
     timeStart, timeFinish = 0, 3600*24*356
     Solver = DormandPrinceSolver(func=SolarSystem.CallSystem)
-    Solver.SetTime(timeStart,timeFinish)
-
+    
     # CALL THE SOLVER
+    Solver.SetTime(timeStart,timeFinish)
     Solver.CallSolver(initConds,1e-4)
 
     # GET LAST POSITION
     lastState = Solver._states[-1]
-    lastState = np.reshape(lastState,shape=(-1,6))
+    SolarSystem.SetCurrentState(lastState)
+    SolarSystem.StoreHistories(Solver._states)
     
-
+    PlottingFunctions.PlotCurrentState(SolarSystem)
     print("=)")
 
     

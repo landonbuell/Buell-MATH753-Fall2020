@@ -8,9 +8,6 @@ MATH 753.01 - HW10
             #### IMPORTS ####
 
 import numpy as np
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
 
             #### CLASS DEFINITIONS ####
 
@@ -51,30 +48,17 @@ class BodyObject () :
         stateVector[3:6] = self._vel
         return stateVector
 
-    @property
-    def GetStateVectorDeriv (self):
-        """ Get the State vector for this body """
-        stateVector = np.empty(shape=(6))
-        stateVector[0:3] = self._vel
-        stateVector[3:6] = self._acl
-        return stateVector
-
     def SetStateVector(self,value):
         """ Get the State vector for this body """
         self._pos = value[0:3]
         self._vel = value[3:6]
         return self
 
-    def SetHistoryArrays(self,xHist,yHist,zHist):
+    def SetHistoryArrays(self,stateHistory):
         """ Attatch Object Path to Self """
-        self._xHist = xHist
-        self._yHist = yHist
-        self._zHist = zHist
+        self._xHist = stateHistory[0]
+        self._yHist = stateHistory[1]
+        self._zHist = stateHistory[2]
         return self
-
-    def SavePaths (self,x,y,z):
-        """ Save X,Y,Z paths in local Object """
-        pass
-
 
 

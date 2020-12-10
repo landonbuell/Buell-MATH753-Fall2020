@@ -34,11 +34,13 @@ class OrbitalSystem :
         """
         self._name = name
         self._bodyList = bodyList
+        self._nBodies = len(self._bodyList)
         self._G = 6.67e-20
       
     def AddBody (self,newBody):
         """ Add 'newBody' to List of Bodies """
         self._bodyList.append(newBody)
+        self._nBodies += 1
         return self
 
     def PopBody (self,index=-1):
@@ -139,6 +141,22 @@ class OrbitalSystem :
         for body in self._bodyList:     # each body
             currentState = np.append(currentState,body.GetStateVector)
         return currentState
+
+    def SetCurrentState(self,stateVector):
+        """ Set [X,Y,Z,dX.dY,dZ] for all bodies in system """
+        stateVector = np.reshape(stateVector,newshape=(self._nBodies,6))
+        for i in range(self._nBodies):     # each body
+            self._bodyList[i].SetStateVector(stateVector[i])
+        return self
+
+    def StoreHistories(self,stateHistories):
+        """ Store [X,Y,Z] for each system """
+        nSteps = stateHistories.shape[0]        # number of steps
+        states = np.reshape(stateHistories,newshape=(self._nBodies,6,nSteps))
+        for i in range(self._nBodies):
+            history = states[i,0:3,:]
+            self._bodyList[i].SetHistoryArrays(history)
+        return self
             
     def __repr__(self):
         """ Return Documentation String on this Orbital System Object """
@@ -186,8 +204,7 @@ class PlottingFunctions :
         
         # Plot All Paths
         for i in range(len(System._bodyList)):     # each body
-            plt.plot(System._bodyList[i]._xHist,
-                     System._bodyList[i]._yHist)
+            plt.plot(System._bodyList[i]._xHist,System._bodyList[i]._yHist)
 
         # Plot Current Positions
         plt.scatter(x=xPositions,y=yPositions,
